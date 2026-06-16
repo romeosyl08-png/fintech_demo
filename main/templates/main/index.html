@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="min-h-screen flex items-center justify-center px-6">
+    <div class="max-w-4xl text-center">
+        
+        <h1 class="text-6xl font-bold mb-6 
+                   bg-gradient-to-r from-blue-400 to-purple-500 
+                   bg-clip-text text-transparent">
+            BOA Capital
+        </h1>
+        
+        <p class="text-xl text-gray-300 mb-8">
+            Votre patrimoine mérite une stratégie d'exception
+        </p>
+        
+        <button class="bg-blue-600 hover:bg-blue-700 
+                       px-8 py-4 rounded-lg text-lg 
+                       transition transform hover:scale-105">
+            Prendre rendez-vous
+        </button>
+        
+    </div>
+</section>
+<section class="py-20 px-6 bg-gray-900">
+    <div class="max-w-5xl mx-auto">
+        
+        <h2 class="text-4xl font-bold text-center mb-12">
+            Cours BRVM en Direct
+        </h2>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b border-gray-700">
+                        <th class="py-4 px-4">Symbole</th>
+                        <th class="py-4 px-4">Société</th>
+                        <th class="py-4 px-4">Prix (FCFA)</th>
+                        <th class="py-4 px-4">Variation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for action in actions %}
+                    <tr class="border-b border-gray-800 hover:bg-gray-800 transition">
+                        <td class="py-4 px-4 font-bold">{{ action.symbole }}</td>
+                        <td class="py-4 px-4">{{ action.nom }}</td>
+                        <td class="py-4 px-4">{{ action.prix }}</td>
+                        <td class="py-4 px-4 {% if action.variation > 0 %}text-green-500{% else %}text-red-500{% endif %}">
+                            {% if action.variation > 0 %}+{% endif %}{{ action.variation }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</section>
+<section class="py-20 px-6 bg-gray-800">
+    <div class="max-w-2xl mx-auto">
+        
+        <h2 class="text-4xl font-bold text-center mb-12">
+            Simulateur d'Investissement
+        </h2>
+        
+        <form method="POST" action="#simulateur" id="simulateur" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Choix de l'action -->
+            <div>
+                <label class="block mb-2 font-semibold">Action</label>
+                <select name="action_choisie" class="w-full p-3 rounded bg-gray-900 border border-gray-700">
+                    {% for action in actions %}
+                    <option value="{{ action.symbole }}">
+                        {{ action.nom }} ({{ action.prix }} FCFA)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Montant -->
+            <div>
+                <label class="block mb-2 font-semibold">Montant à investir (FCFA)</label>
+                <input type="number" name="montant" placeholder="100000" 
+                       class="w-full p-3 rounded bg-gray-900 border border-gray-700">
+            </div>
+            
+            <button type="submit" name="simuler" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-semibold transition">
+                Simuler
+            </button>
+        </form>
+        
+        <!-- Résultat -->
+        {% if simulation %}
+        <div class="mt-8 p-6 bg-gray-900 rounded-lg border border-blue-600">
+            <h3 class="text-2xl font-bold mb-4">Résultat</h3>
+            <p>Action : <span class="font-bold">{{ simulation.nom }}</span></p>
+            <p>Montant investi : <span class="font-bold">{{ simulation.montant }} FCFA</span></p>
+            <p>Nombre d'actions : <span class="font-bold">{{ simulation.nb_actions }}</span></p>
+            <p class="mt-2 text-lg {% if simulation.gain > 0 %}text-green-500{% else %}text-red-500{% endif %}">
+                Rendement estimé : {{ simulation.gain }} FCFA
+            </p>
+        </div>
+        {% endif %}
+        
+    </div>
+</section>
+
+<section class="py-20 px-6 bg-gray-800">
+    <div class="max-w-6xl mx-auto">
+        
+        <h2 class="text-4xl font-bold text-center mb-16">
+            Nos Services
+        </h2>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            
+            <!-- Service 1 -->
+            <div class="bg-gray-900 p-8 rounded-xl 
+                        hover:scale-105 transition">
+                <div class="text-blue-400 text-4xl mb-4">💼</div>
+                <h3 class="text-2xl font-bold mb-4">
+                    Gestion de Patrimoine
+                </h3>
+                <p class="text-gray-400">
+                    Stratégies sur mesure pour faire 
+                    fructifier vos actifs.
+                </p>
+            </div>
+            
+            <!-- Service 2 -->
+            <div class="bg-gray-900 p-8 rounded-xl 
+                        hover:scale-105 transition">
+                <div class="text-purple-400 text-4xl mb-4">📈</div>
+                <h3 class="text-2xl font-bold mb-4">
+                    Investissements
+                </h3>
+                <p class="text-gray-400">
+                    Optimisation de portefeuille 
+                    et placements premium.
+                </p>
+            </div>
+            
+            <!-- Service 3 -->
+            <div class="bg-gray-900 p-8 rounded-xl 
+                        hover:scale-105 transition">
+                <div class="text-green-400 text-4xl mb-4">🛡️</div>
+                <h3 class="text-2xl font-bold mb-4">
+                    Conseil Fiscal
+                </h3>
+                <p class="text-gray-400">
+                    Réduisez vos impôts 
+                    en toute légalité.
+                </p>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<section class="py-20 px-6">
+    <div class="max-w-2xl mx-auto">
+        
+        <h2 class="text-4xl font-bold text-center mb-12">
+            Contactez-nous
+        </h2>
+        
+        {% if success %}
+        <div class="bg-green-600 p-4 rounded-lg mb-6 text-center">
+            ✅ Message envoyé avec succès !
+        </div>
+        {% endif %}
+        
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>{{ form.nom }}</div>
+            <div>{{ form.email }}</div>
+            <div>{{ form.message }}</div>
+            
+            <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 
+                           py-4 rounded-lg text-lg transition">
+                Envoyer
+            </button>
+        </form>
+        
+    </div>
+</section>
+
+
+<footer class="bg-gray-950 py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+        
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+            
+            <!-- Colonne 1 : Logo -->
+            <div>
+                <h3 class="text-2xl font-bold mb-4
+                           bg-gradient-to-r from-blue-400 to-purple-500 
+                           bg-clip-text text-transparent">
+                    BOA Capital
+                </h3>
+                <p class="text-gray-400">
+                    L'excellence au service 
+                    de votre patrimoine.
+                </p>
+            </div>
+            
+            <!-- Colonne 2 : Contact -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Contact</h4>
+                <p class="text-gray-400 mb-2">📧 contact@boacapital.com</p>
+                <p class="text-gray-400 mb-2">📱 +212 6 00 00 00 00</p>
+                <p class="text-gray-400">📍 Casablanca, Maroc</p>
+            </div>
+            
+            <!-- Colonne 3 : Liens -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Navigation</h4>
+                <ul class="text-gray-400 space-y-2">
+                    <li><a href="#" class="hover:text-white transition">Accueil</a></li>
+                    <li><a href="#" class="hover:text-white transition">Services</a></li>
+                    <li><a href="#" class="hover:text-white transition">À propos</a></li>
+                </ul>
+            </div>
+            
+        </div>
+        
+        <!-- Barre du bas -->
+        <div class="border-t border-gray-800 pt-8 text-center">
+            <p class="text-gray-500">
+                © 2026 BOA Capital. Tous droits réservés.
+            </p>
+        </div>
+        
+    </div>
+</footer>
+
+{% endblock %}
